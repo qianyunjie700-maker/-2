@@ -46,7 +46,7 @@ const App: React.FC = () => {
   // 在应用启动时获取CSRF令牌
   useEffect(() => {
     // 发送一个简单的GET请求来获取CSRF令牌
-    apiService.get('/')
+    apiService.get('/auth/csrf-token')
       .catch(() => {
         // 忽略错误，因为这只是为了获取CSRF令牌
         console.log('已尝试获取CSRF令牌');

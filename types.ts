@@ -49,6 +49,8 @@ export interface Order {
   customer_name: string;   // 客户/项目名称
   department_key: string;     // 业务部门（存储部门key）
   user_id?: number;     // 创建订单的用户ID
+  carrier?: string;    // 承运商名称
+  carrier_code?: string;    // 承运商代码，用于调用物流API
   status: OrderStatus;
   warning_status: WarningStatus; // 预警状态
   is_archived: boolean;    // 逻辑删除标记
@@ -157,8 +159,8 @@ export const CARRIER_CODES: Record<string, string> = {
   '邮政': 'youzheng',
   'ems': 'ems',
   '宅急送': 'zhaijisong',
-  '优速快递': 'yousu',
-  '优速': 'yousu',
+  '优速快递': 'youshuwuliu',
+  '优速': 'youshuwuliu',
   '天天快递': 'tiantian',
   '天天': 'tiantian',
   '德邦快递': 'debangwuliu',
@@ -316,7 +318,35 @@ export const CARRIER_CODES: Record<string, string> = {
 
 // 根据快递公司名称获取代码
 export const getCarrierCode = (carrierName: string): string => {
-  return CARRIER_CODES[carrierName] || carrierName.toLowerCase().replace(/\s/g, '');
+  // 确保返回的代码是第三方API支持的
+  const supportedCarriers: Record<string, string> = {
+    '圆通速递': 'yuantong',
+    '圆通': 'yuantong',
+    '京东物流': 'jingdong',
+    '京东': 'jingdong',
+    '跨越速运': 'kuayuesuyun',
+    '跨越': 'kuayuesuyun',
+    '申通快递': 'shentong',
+    '申通': 'shentong',
+    '中通快递': 'zhongtong',
+    '中通': 'zhongtong',
+    '顺丰速运': 'shunfeng',
+    '顺丰': 'shunfeng',
+    '韵达快递': 'yunda',
+    '韵达': 'yunda',
+    '百世快递': 'baishi',
+    '百世': 'baishi',
+    '邮政快递': 'ems',
+    'EMS': 'ems',
+    '天天快递': 'tiantian',
+    '天天': 'tiantian',
+    '优速快递': 'youshuwuliu',
+    '优速': 'youshuwuliu',
+    '宅急送': 'zhaijisong',
+    '邮政': 'ems',
+  };
+  
+  return supportedCarriers[carrierName] || CARRIER_CODES[carrierName] || 'shunfeng'; // 默认使用顺丰
 };
 
 // 角色枚举
